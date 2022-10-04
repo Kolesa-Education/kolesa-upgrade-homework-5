@@ -112,7 +112,7 @@ insert into orders_positions (order_id, position_id) values
 	(8, 9)	
 
 # 2) Напишите запрос, который будет выводить номера заказов (их ИД), номер телефонов клиентов, название партнера
-select orders.id, clients.phone, partners.title
+select distinct orders.id, clients.phone, partners.title
 from clients
 join orders on clients.id = orders.client_id
 join orders_positions on orders.id = orders_positions.order_id
