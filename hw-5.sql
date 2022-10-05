@@ -48,6 +48,11 @@ CREATE TABLE positions_orders (
 );
 
 
+/* Заполните базу тестовыми данными, 
+не менее 3 партнеров, 
+не менее 3 позиций для заказа у каждого из партнеров. 
+3 Пользователя, у каждого из которых от 1 до 5 заказов, 
+в каждом из заказов от 1 до 3 позиций блюд */
 INSERT INTO partners(title, description, address) VALUES (
 	"McDonald's", "The largest American fast-food corporation.", "Timiryazev St. 38/3"
 ), (
@@ -237,11 +242,15 @@ INSERT INTO positions_orders(position_id, order_id) VALUES (
 );
 
 
+/* Напишите запрос, который будет выводить номера заказов (их ИД),
+номер телефонов клиентов, название партнера */
 SELECT orders.id, clients.phone, partners.title FROM orders 
 LEFT JOIN clients ON orders.client_id = clients.id 
 LEFT JOIN partners ON orders.partner_id = partners.id;
 
 
+/* Добавьте еще одного партнера и минимум 1 позицию для него. 
+Но не создавайте заказы. */
 INSERT INTO partners(title, description, address) VALUES (
 	"KFC", "The Harland Sanders' Kentucky Fried Chicken made with secret recipe.", "Gogol St. 44-51"
 );
@@ -260,11 +269,14 @@ INSERT INTO positions(
 	(SELECT id FROM partners WHERE title = "KFC")
 );
 
-
+/* Сделайте запрос, который выведет таких партнеров, у которых еще не было ни одного заказа */
 SELECT partners.title FROM partners
 LEFT JOIN orders ON partners.id = orders.partner_id
 WHERE partners.id NOT IN (SELECT partner_id FROM orders);
 
+
+/* Напишите запрос, который по ID пользователя и ID заказа 
+выведет названия всех позиций из этого заказа. */
 SELECT positions.title FROM positions
 LEFT JOIN positions_orders ON positions_orders.position_id = positions.id
 LEFT JOIN orders ON positions_orders.order_id = orders.id
