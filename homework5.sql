@@ -84,7 +84,7 @@ INSERT INTO orders (id, created_at, address, latitude, longitude,status, client_
  (11, NOW(), "address 3", "33.3", "-33.3", "delivered", 3),
  (12, NOW(), "address 3", "33.3", "-33.3", "new", 3);
 
-INSERT into (position_id, order_id) VALUES 
+INSERT INTO (position_id, order_id) VALUES 
 (1,1), 
 (2,2),
 (3,3),
