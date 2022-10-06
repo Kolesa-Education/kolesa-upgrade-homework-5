@@ -12,14 +12,14 @@ CREATE TABLE partners (
 
 CREATE TABLE clients (
 	id int UNSIGNED PRIMARY KEY auto_increment,
-	phone char(12),
-	fullname varchar(255)
+	phone char(12) NOT NULL,
+	fullname varchar(255) NOT NULL
 );
 
 CREATE TABLE positions (
 	id int UNSIGNED PRIMARY KEY auto_increment,
 	title varchar(255) NOT NULL,
-	description text,
+	description text NOT NULL,
 	price int NOT NULL default(0),
 	photo_url varchar(255),
 	partner_id int UNSIGNED,
@@ -244,7 +244,7 @@ INSERT INTO positions_orders(position_id, order_id) VALUES (
 
 /* Напишите запрос, который будет выводить номера заказов (их ИД),
 номер телефонов клиентов, название партнера */
-SELECT orders.id, clients.phone, partners.title FROM orders 
+SELECT orders.id AS orders_id, clients.phone, partners.title FROM orders 
 LEFT JOIN clients ON orders.client_id = clients.id 
 LEFT JOIN partners ON orders.partner_id = partners.id;
 
