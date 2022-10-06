@@ -36,7 +36,7 @@ CREATE TABLE orders(
 	status enum('new', 'accepted', 'delivering', 'done'),
 	client_id int UNSIGNED NOT NULL,
 	FOREIGN KEY (client_id) REFERENCES clients(id)
-		ON UPDATE CASCADEа
+		ON UPDATE CASCADE
 		ON DELETE RESTRICT
 );
 
@@ -60,6 +60,7 @@ INSERT INTO partners (title, description, address) VALUES (
 	"пр.Туран 21а"
 ), (
 	"CrepeCafe",
+	"Modern CrepeCafe",
 	"Kunayeva 12/1"
 ), (
 	"Boba",
@@ -86,6 +87,7 @@ INSERT INTO positions (title, description, price, partner_id) VALUES (
 	(SELECT id FROM partners WHERE title="Lanzhou")
 ), (
 	"Говядина с овощами",
+	null,
 	2100,
 	(SELECT id FROM partners WHERE title="Lanzhou")
 );
