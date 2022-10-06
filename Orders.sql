@@ -15,8 +15,9 @@ CREATE TABLE Partners(
 );
 
 INSERT  Partners (title,description,address)
-	VALUES ("Wolt","Good service","Abay 55"),("Glovo","Bad service","Zhandosov 77"),
-	("Chocofood","Medium service","Gagarin 19")
+	VALUES ("Wolt","Неплохой сервис и доставка","Аблайхана 100"),
+    ("Glovo","Ниже среднего","Саина 290"),
+	("Chocofood","Пойдет иногда","Гага 2020")
 
 CREATE TABLE Positions(
 	id int unsigned primary key auto_increment,
@@ -31,15 +32,15 @@ CREATE TABLE Positions(
 )
 
 INSERT Positions (title, description,price,partner_id) values
- ("Japan bowl","fish,rice,salat","1500",(SELECT id FROM Partners WHERE title = "Wolt")),
- ("Soup","Chicken,tomato","1300",(SELECT id FROM Partners WHERE title = "Wolt")),
- ("Doner","Doner","1500",(SELECT id FROM Partners WHERE title = "Wolt")),
- ("Burger","chicken,cheese","1100",(SELECT id FROM Partners WHERE title = "Glovo")),
- ("Fried chicken","chicken,rice","1700",(SELECT id FROM Partners WHERE title = "Glovo")),
- ("Japan bowl","fish,rice,salat","1300",(SELECT id FROM Partners WHERE title = "Glovo")),
- ("Sushi","fish,rice,souce","2000",(SELECT id FROM Partners WHERE title = "Chocofood")),
- ("beer","miller","800",(SELECT id FROM Partners WHERE title = "Chocofood")),
- ("Hotdog","bread,sausage","1400",(SELECT  id FROM Partners WHERE title = "Chocofood"))
+ ("Лепешка","Плов, салат","1500",(SELECT id FROM Partners WHERE title = "Wolt")),
+ ("Суп","Овощи,рис","1300",(SELECT id FROM Partners WHERE title = "Wolt")),
+ ("Донер","Донер, айран","1500",(SELECT id FROM Partners WHERE title = "Wolt")),
+ ("Бургер","Хот дог","1100",(SELECT id FROM Partners WHERE title = "Glovo")),
+ ("Хот дог","хлеб, лук","1700",(SELECT id FROM Partners WHERE title = "Glovo")),
+ ("Суп","Картошка фри","1300",(SELECT id FROM Partners WHERE title = "Glovo")),
+ ("Суши","Рыба,рис","2000",(SELECT id FROM Partners WHERE title = "Chocofood")),
+ ("Коктейль","Водка с пивом","800",(SELECT id FROM Partners WHERE title = "Chocofood")),
+ ("Коктейль","Пиво без водки","1400",(SELECT  id FROM Partners WHERE title = "Chocofood"))
 
 CREATE TABLE Clients(
 	id int unsigned primary key auto_increment,
@@ -73,32 +74,32 @@ CREATE TABLE Order_positions(
 )
 
  INSERT clients (phone,fullname) values
- ("+77071112321","John Jones"),
- ("+77071114321","Jack Miller"),
- ("+77071132123","Tom Noble")
+ ("+77071112321","Артур Пирогов"),
+ ("+77071114321","Насыр Булат"),
+ ("+77071132123","Хабиб Нурма")
 
  INSERT orders (created_at,address,status,client_id) values
-(CURTIME(),"Gagarin 99","open",(SELECT id FROM Clients WHERE fullname = "John Jones")),
-(CURTIME(),"Dostik 10","closed",(SELECT id FROM Clients WHERE fullname = "Jack Miller")),
-(CURTIME(),"Dostik 10","open",(SELECT id FROM Clients WHERE fullname = "Jack Miller")),
-(CURTIME(),"Abay 54","closed",(SELECT id FROM Clients WHERE fullname = "Tom Noble")),
-(CURTIME(),"Abay 54","open",(SELECT id FROM Clients WHERE fullname = "Tom Noble")),
-(CURTIME(),"Zholdasbekov 69","closed",(SELECT id FROM Clients WHERE fullname = "Tom Noble"))
+(CURTIME(),"Гагарин Парк 200","open",(SELECT id FROM Clients WHERE fullname = "Артур Пирогов")),
+(CURTIME(),"Мега Парк 100","closed",(SELECT id FROM Clients WHERE fullname = "Хабиб Нурма")),
+(CURTIME(),"Абай 500","open",(SELECT id FROM Clients WHERE fullname = "Артур Пирогов")),
+(CURTIME(),"Саина 290","closed",(SELECT id FROM Clients WHERE fullname = "Хабиб Нурма")),
+(CURTIME(),"Дом с бассейном 22","open",(SELECT id FROM Clients WHERE fullname = "Насыр Булат")),
+(CURTIME(),"Саина 122","closed",(SELECT id FROM Clients WHERE fullname = "Насыр Булат"))
 
 INSERT Order_positions(order_id,position_id) values
-((SELECT id FROM Orders WHERE id = 1),(SELECT id FROM positions WHERE title = "Hotdog")),
-((SELECT id FROM Orders WHERE id = 1),(SELECT id FROM positions WHERE title = "Doner")),
-((SELECT id FROM Orders WHERE id = 1),(SELECT id FROM positions WHERE title = "fried chicken")),
-((SELECT id FROM Orders WHERE id = 2),(SELECT id FROM positions WHERE title = "Doner")),
-((SELECT id FROM Orders WHERE id = 2),(SELECT id FROM positions WHERE title = "Soup")),
-((SELECT id FROM Orders WHERE id = 3),(SELECT id FROM positions WHERE title = "Beer")),
-((SELECT id FROM Orders WHERE id = 3),(SELECT id FROM positions WHERE title = "Sushi")),
-((SELECT id FROM Orders WHERE id = 3),(SELECT id FROM positions WHERE title = "Soup")),
-((SELECT id FROM Orders WHERE id = 4),(SELECT id FROM positions WHERE title = "Soup")),
-((SELECT id FROM Orders WHERE id = 4),(SELECT id FROM positions WHERE title = "Hotdog")),
-((SELECT id FROM Orders WHERE id = 4),(SELECT id FROM positions WHERE title = "Doner")),
-((SELECT id FROM Orders WHERE id = 5),(SELECT id FROM positions WHERE title = "Hotdog")),
-((SELECT id FROM Orders WHERE id = 6),(SELECT id FROM positions WHERE title = "Hotdog"))
+((SELECT id FROM Orders WHERE id = 1),(SELECT id FROM positions WHERE title = "Хот дог")),
+((SELECT id FROM Orders WHERE id = 1),(SELECT id FROM positions WHERE title = "Донер")),
+((SELECT id FROM Orders WHERE id = 1),(SELECT id FROM positions WHERE title = "Суп")),
+((SELECT id FROM Orders WHERE id = 2),(SELECT id FROM positions WHERE title = "Донер")),
+((SELECT id FROM Orders WHERE id = 2),(SELECT id FROM positions WHERE title = "Суп")),
+((SELECT id FROM Orders WHERE id = 3),(SELECT id FROM positions WHERE title = "Коктейль")),
+((SELECT id FROM Orders WHERE id = 3),(SELECT id FROM positions WHERE title = "Суши")),
+((SELECT id FROM Orders WHERE id = 3),(SELECT id FROM positions WHERE title = "Бургер")),
+((SELECT id FROM Orders WHERE id = 4),(SELECT id FROM positions WHERE title = "Суп")),
+((SELECT id FROM Orders WHERE id = 4),(SELECT id FROM positions WHERE title = "Хот дог")),
+((SELECT id FROM Orders WHERE id = 4),(SELECT id FROM positions WHERE title = "Донер")),
+((SELECT id FROM Orders WHERE id = 5),(SELECT id FROM positions WHERE title = "Хот дог")),
+((SELECT id FROM Orders WHERE id = 6),(SELECT id FROM positions WHERE title = "Хот дог"))
 
 #ЗАДАНИЕ 2
 #Напишите запрос, который будет выводить 
@@ -120,10 +121,10 @@ JOIN Partners ON Partners.id = positions.partner_id
 #который выведет таких партнеров, у которых еще не было ни одного заказа
 
 INSERT Partners (title, description,address) values
-("Yevgeniy","Only burgers","Zharokov 99")
+("Джон","Хот дог","Гоголь 22")
 
  INSERT Positions (title, description,price,partner_id) values
- ("Big burger","meat, fish, chicken, mayo","4000",(select id from Partners where title = "Yevgeniy"))
+ ("Бургер","салат с мясомgi","4000",(select id from Partners where title = "Джон"))
 
  SELECT * FROM Partners
  WHERE partners.id not in
