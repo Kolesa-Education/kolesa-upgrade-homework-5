@@ -40,7 +40,7 @@ create table positions(
 	partner_id int unsigned not null,
 	foreign key(partner_id) references partners(id)
 		on update cascade
-		on delete restrict
+		on delete cascade
 );
 
 insert into positions(title, description, price, photo_url, partner_id) values(
@@ -127,7 +127,7 @@ create table orders (
 	client_id int unsigned not null,
 	foreign key (client_id) references clients(id)
 		on update cascade
-		on delete cascade
+		on delete restrict
 );
 
 create table positions_orders (
@@ -139,7 +139,7 @@ create table positions_orders (
 		on delete cascade,
 	foreign key (order_id) references orders(id)
 		on update cascade
-		on delete cascade
+		on delete restrict
 )
 
 insert into orders(created_at, address, latitude, longitude, status, client_id)
@@ -171,10 +171,10 @@ from orders
 inner join clients on orders.client_id=clients.id
 inner join positions_orders on orders.id=positions_orders.order_id
 inner join positions on positions_orders.position_id=positions.id
-inner join partners on positions.partner_id=partners.id
+inner join partners on positions.partner_id=partners.id;
 
 insert into partners(title, description, adress) 
-values("Nandoo", "korean food", "Altynsarina 88")
+values("Nandoo", "korean food", "Altynsarina 88");
 
 insert into positions(title, description, price, photo_url, partner_id) values(
 	"Ramen",
@@ -189,13 +189,13 @@ from partners
 left join positions on partners.id=positions.partner_id
 left join positions_orders on positions.id=positions_orders.position_id
 group by partners.title
-having count_order=0
+having count_order=0;
 
 select positions.title
 from positions
 inner join positions_orders on positions.id=positions_orders.position_id
 inner join orders on positions_orders.order_id=orders.id
-where client_id=1 and order_id=2
+where client_id=1 and order_id=2;
 
 
 
