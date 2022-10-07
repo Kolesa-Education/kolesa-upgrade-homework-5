@@ -1,0 +1,277 @@
+CREATE DATABASE delivery;
+
+USE delivery;
+
+CREATE TABLE Partners (
+	id int UNSIGNED primary key auto_increment,
+	title varchar(150) NOT NULL,
+	description text,
+	address varchar(255) NOT NULL
+)
+
+SHOW tables;
+
+SELECT * FROM partners;
+
+CREATE TABLE positions (
+	id int UNSIGNED primary key auto_increment,
+	title varchar(255) NOT NULL,
+	description text,
+	price int NOT NULL DEFAULT(0),
+	photo_url varchar(255),
+	partner_id int UNSIGNED NOT NULL,
+	FOREIGN KEY (partner_id) REFERENCES partners(id)
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT
+)
+
+SELECT * FROM positions;
+
+CREATE TABLE clients (
+	id int UNSIGNED primary key auto_increment,
+	phone char(12),
+	fullname varchar(255)
+)
+
+SELECT * FROM clients;
+
+CREATE TABLE orders (
+	id int UNSIGNED primary key auto_increment,
+	created_at datetime DEFAULT CURRENT_TIMESTAMP,
+	address varchar(255),
+	latitude float,
+	longtitude float,
+	status ENUM ('new','accepted','delivering','finished'),
+	client_id int UNSIGNED NOT NULL,
+	FOREIGN KEY (client_id) REFERENCES clients(id)
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT
+)
+
+SELECT * FROM orders;
+
+CREATE TABLE orders_positions (
+	order_id int UNSIGNED NOT NULL,
+	position_id int UNSIGNED NOT NULL,
+	PRIMARY KEY (order_id, position_id),
+	FOREIGN KEY (order_id) REFERENCES orders(id)
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT,
+	FOREIGN KEY (position_id) REFERENCES positions(id)
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT
+)
+
+TRUNCATE orders_positions;
+DROP TABLE orders_positions;
+SHOW tables;
+
+CREATE TABLE orders_positions (
+	id bigint UNSIGNED primary key auto_increment,
+	order_id int UNSIGNED NOT NULL,
+	position_id int UNSIGNED NOT NULL,
+	FOREIGN KEY (order_id) REFERENCES orders(id)
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT,
+	FOREIGN KEY (position_id) REFERENCES positions(id)
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT
+)
+
+SELECT * FROM orders_positions;
+
+INSERT INTO partners (title, description, address)
+VALUES ('Burger King','Fast Food, American, Burgers','Makatayeva 127/1'),
+		('Coffee Boom', 'European, Desserts, Breakfasts, Pasta, Sandwiches, Pizza', 'Gogol 15'),
+		('Del Papa', 'Italian, Pizza, Pasta', 'Gogol 87')
+		
+SELECT * FROM partners;
+
+INSERT INTO positions (title, description, price, photo_url, partner_id)
+VALUES ('Пенне Арабьята','Пенне в томатном соусе с чесноком, перцем чили и петрушкой', 2599,'https://foodies.academy/wp-content/uploads/2019/06/penne-arrabbiata-2-601x601.jpg',
+	(SELECT id from partners WHERE title='Del Papa')
+	),
+	('Феттуччине Альфредо','Домашняя фреш-паста, куриное филе, шампиньоны, сливочный соус', 3599,'https://grandkulinar.ru/uploads/posts/2015-03/1426170885_pasta-fettuchini-s-sousom-alfredo.jpeg',
+	(SELECT id from partners WHERE title='Del Papa')
+	),
+	('Четыре сыра','Сырный соус, горгонзола, моцарелла, копченая скаморца, пармезан', 3599,'https://vilkin.pro/wp-content/uploads/2019/11/picca-chetire-sira-770x513.jpg',
+	(SELECT id from partners WHERE title='Del Papa')
+	)
+	
+INSERT INTO positions (title, description, price, photo_url, partner_id)
+VALUES ('Круассан с курицей','Круассан на масле Aop Poitou Charente Франция, филе курицы, салат айсберг, сыр гуада', 1400,'https://sedelice.ru/uploads/item/262/658/original.jpg?_=3419056374',
+	(SELECT id from partners WHERE title='Coffee Boom')
+	),
+	('Капучино','Кофейные зерна Julius meinl 80% арабика', 800,'https://shop.tastycoffee.ru/files/shares/data/blog/capuccino-latte-flatwhite/image7.jpg',
+	(SELECT id from partners WHERE title='Coffee Boom')
+	),
+	('Чизкейк','Классический творожный десерт на нежном бисквите', 1700,'https://cdn.lifehacker.ru/wp-content/uploads/2021/02/shutterstock_1667283727_1612432902-1280x640.jpg',
+	(SELECT id from partners WHERE title='Coffee Boom')
+	)
+	
+INSERT INTO positions (title, description, price, photo_url, partner_id)
+VALUES ('Стрипсы 8шт','Сочные стрипсы из нежного куриного филе в хрустящей панировке', 2300,'https://fastfood24.ru/thumb/2/8u7Z5XS5puwfnBaCGTz7qw/630r630/d/stripsy.jpg',
+	(SELECT id from partners WHERE title='Burger King')
+	),
+	('Криспи чикен','Булочка с кунжутом, майонез, салат, томаты, куриная котлета Криспи чикен', 1250,'https://burgerking.kz/uploads/menuproducts/image/big_1628581421.png',
+	(SELECT id from partners WHERE title='Burger King')
+	),
+	('Fanta','Fanta 500ml', 400,'https://gippo.kz/wp-content/uploads/2021/06/FANTA-C-500.jpg',
+	(SELECT id from partners WHERE title='Burger King')
+	)
+	
+SELECT * FROM positions;
+
+INSERT INTO clients (phone, fullname)
+VALUES ('87755576466', 'Aidana K'),
+		('87001232323', 'Aleksandr Park'),
+		('87477536987', 'Magzhan B')
+
+INSERT INTO orders (address, latitude, longtitude, status, client_id)
+VALUES (
+	'Tole bi 59', 43.25, 76.94, 'new', (SELECT id from clients WHERE fullname='Aidana K')
+),
+(
+	'Наурызбай батыра 93/79', 23.85, 56.12, 'new', (SELECT id from clients WHERE fullname='Aidana K')
+),
+(
+	'Абая 48', 89.89651, 14.236, 'new', (SELECT id from clients WHERE fullname='Aidana K')
+)
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Tole bi 59'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Fanta')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Tole bi 59'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Стрипсы 8шт')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Tole bi 59'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Стрипсы 8шт')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Tole bi 59'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Криспи чикен'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Наурызбай батыра 93/79'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Круассан с курицей')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Наурызбай батыра 93/79'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Чизкейк')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Наурызбай батыра 93/79'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Чизкейк')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Наурызбай батыра 93/79'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Наурызбай батыра 93/79'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Абая 48'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Пенне Арабьята')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Абая 48'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Пенне Арабьята')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Абая 48'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Феттуччине Альфредо')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:56:09' and address='Абая 48'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Четыре сыра'))
+
+		
+INSERT INTO orders (address, latitude, longtitude, status, client_id)
+VALUES (
+	'Шевченко 13', 43.25, 76.94, 'new', (SELECT id from clients WHERE fullname='Aleksandr Park')
+),
+(
+	'Маркова 157', 23.85, 56.12, 'new', (SELECT id from clients WHERE fullname='Aleksandr Park')
+),
+(
+	'Аль-Фараби 12', 89.89651, 14.236, 'new', (SELECT id from clients WHERE fullname='Aleksandr Park')
+),
+(
+	'Темирязева 245/56', 89.89651, 14.236, 'new', (SELECT id from clients WHERE fullname='Aleksandr Park')
+)
+
+#2022-10-07 22:58:38
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Шевченко 13'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Fanta')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Шевченко 13'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Стрипсы 8шт')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Шевченко 13'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Криспи чикен')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Шевченко 13'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Криспи чикен'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Маркова 157'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Круассан с курицей')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Маркова 157'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Чизкейк')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Маркова 157'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Чизкейк')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Маркова 157'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Маркова 157'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Круассан с курицей'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Аль-Фараби 12'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Пенне Арабьята')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Аль-Фараби 12'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Четыре сыра')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Аль-Фараби 12'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Феттуччине Альфредо')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Аль-Фараби 12'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Четыре сыра'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Круассан с курицей')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Чизкейк')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино')),
+		((SELECT id from orders WHERE created_at='2022-10-07 22:58:38' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино'))
+
+
+
+INSERT INTO orders (address, latitude, longtitude, status, client_id)
+VALUES (
+	'Достык 45/56', 43.25, 76.94, 'new', (SELECT id from clients WHERE fullname='Magzhan B')
+),
+(
+	'Бальзака 32', 23.85, 56.12, 'new', (SELECT id from clients WHERE fullname='Magzhan B')
+),
+(
+	'Манаса 23', 89.89651, 14.236, 'new', (SELECT id from clients WHERE fullname='Magzhan B')
+),
+(
+	'Темирязева 245/56', 89.89651, 14.236, 'new', (SELECT id from clients WHERE fullname='Magzhan B')
+),
+(
+	'Темирязева 89', 89.89651, 14.236, 'new', (SELECT id from clients WHERE fullname='Magzhan B')
+)
+
+#2022-10-07 23:00:24
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Достык 45/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Fanta')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Достык 45/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Стрипсы 8шт')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Достык 45/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Криспи чикен')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Достык 45/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Burger King') and title='Криспи чикен'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Бальзака 32'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Круассан с курицей')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Бальзака 32'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Чизкейк')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Бальзака 32'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Чизкейк')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Бальзака 32'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Бальзака 32'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Круассан с курицей'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Манаса 23'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Пенне Арабьята')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Манаса 23'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Четыре сыра')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Манаса 23'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Феттуччине Альфредо')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Манаса 23'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Четыре сыра'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Круассан с курицей')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Чизкейк')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 245/56'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Coffee Boom') and title='Капучино'))
+
+INSERT INTO orders_positions (order_id, position_id)
+VALUES ((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 89'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Пенне Арабьята')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 89'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Четыре сыра')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 89'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Феттуччине Альфредо')),
+		((SELECT id from orders WHERE created_at='2022-10-07 23:00:24' and address='Темирязева 89'),(SELECT id from positions WHERE partner_id=(SELECT id from partners WHERE title='Del Papa') and title='Четыре сыра'))
+
+
+SELECT * FROM orders_positions;
+
+
+SELECT id AS id_order, (SELECT phone FROM clients WHERE id=(SELECT client_id FROM orders WHERE id=id_order)), (SELECT title FROM partners WHERE id=(SELECT partner_id FROM positions WHERE id=(SELECT position_id FROM orders_positions WHERE order_id=id_order LIMIT 1))) FROM orders;
+
+
+INSERT INTO partners (title, description, address)
+VALUES ('CoCo','American, Burgers','Shevchenko 127/1')
+
+INSERT INTO positions (title, description, price, photo_url, partner_id)
+VALUES ('Стрипсы 8шт','Сочные стрипсы из нежного куриного филе в хрустящей панировке', 1000,'https://fastfood24.ru/thumb/2/8u7Z5XS5puwfnBaCGTz7qw/630r630/d/stripsy.jpg',
+	(SELECT id from partners WHERE title='CoCo')
+	)
+
+SELECT title FROM partners WHERE id=(SELECT partner_id FROM positions WHERE id NOT IN 
+	(SELECT position_id FROM orders_positions))
+
+SELECT title FROM positions WHERE id IN (
+	SELECT position_id FROM orders_positions WHERE order_id=(
+		SELECT id FROM orders WHERE client_id=1 LIMIT 1
+	)
+)
