@@ -2,7 +2,7 @@ create database kolesaUpgrade;
 
 use kolesaUpgrade;
 
-create table Partners (
+create table partners (
 	id int unsigned primary key auto_increment,
 	title varchar(150) not null,
 	description text,
@@ -24,29 +24,30 @@ create table positions (
 
 show tables;
 
-create table Clients (
+create table clients (
 	id int unsigned primary key auto_increment,
-	phone char(12),
-	fullname varchar(255)
+	phone char(12) not null,
+	fullname varchar(255) not null
 );
 
-create table Orders (
+create table orders (
 	id int unsigned primary key auto_increment,
 	created_at datetime,
 	address varchar(255),
 	latitude float,
 	longitude float,
-	status enum('новый', 'принят рестораном', 'доставляется', 'завершен'),
+	status enum('new', 'adopted by the restaurant', 'delivered', 'completed'),
 	client_id int unsigned not null,
-	foreign key (client_id) references Clients(id)
+	foreign key (client_id) references clients(id)
 		on update cascade
 		on delete restrict
 );
 
-create table Manyman (
+create table manyman (
 	position_id int unsigned not null,
 	order_id int unsigned not null,
-	foreign key (order_id) references Orders(id)
+	constraint pk_manymanpk primary key(position_id, order_id),
+	foreign key (order_id) references orders(id)
 		on update cascade
 		on delete restrict,
 	foreign key (position_id) references positions(id)
@@ -54,7 +55,7 @@ create table Manyman (
 		on delete restrict
 );
 
-insert into Partners (title, description, adress)
+insert into partners (title, description, adress)
 	values ("Apple", "smartphonemilk", "California"), 
 	("Saudi Aramco", "oilmillionerspizza", "Dubai"),
 	("Microsoft", "et etke sorpa betke", "Astana")
@@ -74,33 +75,34 @@ insert into positions (title, description, price, photo_url, partner_id)
 
 select * from positions;
 
-insert into Clients (phone, fullname)
+insert into clients (phone, fullname)
 	values ("+777777777", "Timatiger"),
 	("+707707777", "Abeke"),
 	("+770770770", "Magadan")
 
-select * from Clients;
+select * from clients;
 
-insert into Orders (created_at, address, latitude, longitude, status, client_id)
-	values (20220701, "Farabi", 15.2, 17.6, "новый", 1),
-	(20220101, "Abay", 15.2, 17.6, "принят рестораном", 2),
-	(20220401, "Shamshi", 15.2, 17.6, "принят рестораном", 2),
-	(20220301, "Turan", 15.2, 17.6, "доставляется", 3),
-	(20220501, "e35", 15.2, 17.6, "доставляется", 3)
+insert into orders (created_at, address, latitude, longitude, status, client_id)
+	values (20220701, "Farabi", 15.2, 17.6, "new", 1),
+	(20220101, "Abay", 15.2, 17.6, "adopted by the restaurant", 2),
+	(20220401, "Shamshi", 15.2, 17.6, "adopted by the restaurant", 2),
+	(20220301, "Turan", 15.2, 17.6, "delivered", 3),
+	(20220501, "e35", 15.2, 17.6, "delivered", 3)
 
-insert into Manyman (position_id, order_id)
-values (1, 1), (2, 1), (4, 2), (5, 2), (7, 3), (8, 3)
+insert into manyman (position_id, order_id)
+values (1, 1), (2, 1), (4, 2), (5, 2), (7, 3), (8, 3), (9, 4), (3, 5)
 
-select * from Manyman;
+select * from orders;
 
-SELECT o.id, c.phone, p.title 
-FROM Orders o
-INNER JOIN Clients c on o.client_id = c.id
-inner join Manyman mm on o.id = mm.order_id 
+SELECT o.id as order_id, max(c.phone), max(p.title) 
+FROM orders o
+INNER JOIN clients c on o.client_id = c.id
+inner join manyman mm on o.id = mm.order_id 
 inner join positions po on mm.position_id  = po.id 
 inner join partners p on po.partner_id  = p.id 
+group by o.id 
 
-insert into Partners (title, description, adress)
+insert into partners (title, description, adress)
 	values ("KolesaCore", "pelmen", "Almaty")
 
 insert into positions (title, description, price, photo_url, partner_id)
