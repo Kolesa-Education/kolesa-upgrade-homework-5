@@ -95,10 +95,7 @@ VALUES
 	((SELECT `id` FROM Orders WHERE `id` = 6),(SELECT `id` FROM Positions WHERE `title` = 'Спагетти Болоньезе'));
 
 
-SELECT
- 	Orders.`id` as 'Номер заказа',
- 	Clients.`phone` as 'Телефон клиента',
- 	Partners.`title` as 'Партнёр'
+SELECT Orders.`id` AS 'Номер заказа', Clients.`phone` AS 'Номер телефона клиента', Partners.`title` AS 'Партнер'
 FROM Orders
 	JOIN OrderPositions  
 		ON Orders.`id` = OrderPositions.`order_id`
@@ -108,6 +105,8 @@ FROM Orders
 		ON Orders.`client_id` = Clients.`id`
 	JOIN Partners
 		ON Partners.`id` = Positions.`partner_id`;
+
+		
 
 INSERT INTO `Partners` 
     (`title`, `description`, `address`) 
@@ -121,7 +120,18 @@ VALUES
 
 SELECT * FROM Partners
 	WHERE Partners.`id` NOT IN (
-		 (SELECT `partner_id` FROM Positions
-		 	JOIN OrderPositions
-				ON Positions.`id` = OrderPositions.`position_id` WHERE Positions.`id` = OrderPositions.`position_id`) 
-);
+		 (
+			SELECT `partner_id` FROM Positions
+		 		JOIN OrderPositions
+					ON Positions.`id` = OrderPositions.`position_id` 
+						WHERE Positions.`id` = OrderPositions.`position_id`
+		 ) 
+	);
+
+
+
+
+
+SELECT o.`id` AS 'Номер Заказа' ,p.`id` 'Номер позиции',p.`title` FROM Orders AS o, Positions AS p, OrderPositions
+ 	WHERE OrderPositions.`order_id` = o.`id`
+ 	AND OrderPositions.`position_id` = p.`id` ;
