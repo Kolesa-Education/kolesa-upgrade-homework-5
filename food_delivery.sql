@@ -42,13 +42,13 @@ CREATE TABLE clients -- таблица клиентов
 CREATE TABLE orders -- таблица заказов
 (
     id         int UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-    created_at datetime                                                                        NOT NULL,
-    address    varchar(255)                                                                    NOT NULL,
-    latitude   float                                                                           NOT NULL,
-    longitude  float                                                                           NOT NULL,
+    created_at datetime                                                                       NOT NULL,
+    address    varchar(255)                                                                   NOT NULL,
+    latitude   float                                                                          NOT NULL,
+    longitude  float                                                                          NOT NULL,
     status     enum ('Создан', 'Принят', 'Готовится', 'Доставляется', 'Доставлен', 'Отменен') NOT NULL,
-    clien_id   int UNSIGNED                                                                    NOT NULL,
-    FOREIGN KEY (clien_id) REFERENCES clients (id)
+    client_id   int UNSIGNED                                                                   NOT NULL,
+    FOREIGN KEY (client_id) REFERENCES clients (id)
         ON UPDATE CASCADE  -- при изменении id клиента в заказах также поменяем
         ON DELETE RESTRICT -- не удаляем партнера, пока у него есть заказы
     -- если удалим, то история заказа будет неполной, нарушается согласованность БД
@@ -113,9 +113,9 @@ SELECT *
 FROM clients;
 
 
-INSERT INTO orders (created_at, address, latitude, longitude, status, clien_id)
-VALUES (CURRENT_TIMESTAMP() - 200, 'Ниже Рыскулова, выше плинтуса', 43.307714, 76.919704, 'Доставлен', 1),
-       (CURRENT_TIMESTAMP() - 500, 'Ак орда', 51.125894, 71.445965, 'Отменен', 2),
+INSERT INTO orders (created_at, address, latitude, longitude, status, client_id)
+VALUES (CURRENT_TIMESTAMP()-100, 'Ниже Рыскулова, выше плинтуса', 43.307714, 76.919704, 'Доставлен', 1),
+       (CURRENT_TIMESTAMP()-200, 'Ак орда', 51.125894, 71.445965, 'Отменен', 2),
        (CURRENT_TIME(), 'Шевченко 157В', 43.243461, 76.900603, 'Принят', 3);
 
 SELECT *
@@ -137,12 +137,14 @@ FROM order_contents;
 
 -- Задание 2. Вывод номеров заказов (их ИД), номеров телефонов клиентов, названий партнеров
 
-SELECT DISTINCT orders.id, clients.phone, partners.title
+SELECT DISTINCT orders.id      AS order_id,
+                clients.phone  AS clients_phone,
+                partners.title AS partners_title
 FROM orders
-         LEFT JOIN clients ON orders.clien_id = clients.id
+         LEFT JOIN clients ON orders.client_id = clients.id
          LEFT JOIN order_contents ON orders.id = order_contents.order_id
          LEFT JOIN positions ON order_contents.position_id = positions.id
-         LEFT JOIN partners ON positions.partner_id = partners.id
+         LEFT JOIN partners ON positions.partner_id = partners.id;
 
 
 -- Задание 3. Добавьте еще одного партнера и минимум 1 позицию для него.
@@ -157,11 +159,9 @@ VALUES ('Двойной чизбергер', 'Миллиард коллорий 
         'https://images.app.goo.gl/BtaqXx5WW4Lm7Wqf9', 4);
 
 WITH partners_with_orders AS
-(
-    SELECT DISTINCT partner_id
-    FROM order_contents
-    LEFT JOIN positions ON positions.id = order_contents.position_id
-)
+         (SELECT DISTINCT partner_id
+          FROM order_contents
+                   LEFT JOIN positions ON positions.id = order_contents.position_id)
 
 SELECT partners.*
 FROM partners
@@ -174,7 +174,7 @@ WHERE p.partner_id IS NULL;
 
 SELECT p.title
 FROM order_contents
-     LEFT JOIN orders o ON o.id = order_contents.order_id
-     LEFT OUTER JOIN positions p ON p.id = order_contents.position_id
-WHERE o.clien_id = 3 -- id клиента
-  AND o.id = 3 -- id заказа
+         LEFT JOIN orders o ON o.id = order_contents.order_id
+         LEFT OUTER JOIN positions p ON p.id = order_contents.position_id
+WHERE o.client_id = 3 -- id клиента
+  AND o.id = 3; -- id заказа
