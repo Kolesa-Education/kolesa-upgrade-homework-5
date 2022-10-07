@@ -272,7 +272,7 @@ INSERT INTO positions(
 /* Сделайте запрос, который выведет таких партнеров, у которых еще не было ни одного заказа */
 SELECT partners.title FROM partners
 LEFT JOIN orders ON partners.id = orders.partner_id
-WHERE partners.id NOT IN (SELECT partner_id FROM orders);
+WHERE orders.partner_id IS NULL;
 
 
 /* Напишите запрос, который по ID пользователя и ID заказа 
