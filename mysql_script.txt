@@ -266,3 +266,12 @@ INSERT INTO positions (title, description, price, photo_url, partner_id)
 VALUES ('Стрипсы 8шт','Сочные стрипсы из нежного куриного филе в хрустящей панировке', 1000,'https://fastfood24.ru/thumb/2/8u7Z5XS5puwfnBaCGTz7qw/630r630/d/stripsy.jpg',
 	(SELECT id from partners WHERE title='CoCo')
 	)
+
+SELECT title FROM partners WHERE id=(SELECT partner_id FROM positions WHERE id NOT IN 
+	(SELECT position_id FROM orders_positions))
+
+SELECT title FROM positions WHERE id IN (
+	SELECT position_id FROM orders_positions WHERE order_id=(
+		SELECT id FROM orders WHERE client_id=1 LIMIT 1
+	)
+)
