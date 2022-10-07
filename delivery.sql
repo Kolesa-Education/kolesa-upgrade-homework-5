@@ -33,17 +33,6 @@ CREATE TABLE IF NOT EXISTS Positions (
 	FOREIGN KEY (`partner_id`) REFERENCES Partners(`id`)
 );
 
-INSERT INTO Positions
-	(`title`,`description`,`price`,`photo_url`,`partner_id`)
-VALUES
-	(`Бургер`, `Бургер — это блюдо, обычно состоящее из котлеты из измельченного мяса, как правило, говядины, помещенной внутрь нарезанной булочки.`, 890,`burger.png`, SELECT `id` from Partners WHERE `title`=`McDonalds`),
-	(`Цезарь ролл`, `100% белое куриное мясо в хрустящей панировке, ломтик помидора, листья салата и ломтики твёрдого сыра, заправленные специальным соусом и завёрнутые в пшеничную лепешку.`, 1250,`roll.png`, SELECT `id` from Partners WHERE `title`=`McDonalds`),
-	(`Пирожок чёрная смородина`, `Горячий пирожок из хрустящего теста с аппетитной начинкой из черной смородины. `, 500,`pirozhok.png`, SELECT `id` from Partners WHERE `title`=`McDonalds`),
-	(`Спагетти Болоньезе`, `Густой мясной соус с томатами,
-пармезаном, зеленью и маслом чили`, 2199,`lapsha1.png`, SELECT `id` from Partners WHERE `title`=`Del Papa`),
-	(`Пирожок чёрная смородина`, `Горячий пирожок из хрустящего теста с аппетитной начинкой из черной смородины. `, 500,`pirozhok.png`, SELECT `id` from Partners WHERE `title`=`McDonalds`),
-	(`Пирожок чёрная смородина`, `Горячий пирожок из хрустящего теста с аппетитной начинкой из черной смородины. `, 500,`pirozhok.png`, SELECT `id` from Partners WHERE `title`=`McDonalds`),
-
 CREATE TABLE IF NOT EXISTS OrderPositions (
 	`order_id` INT UNSIGNED,
 	`position_id` INT UNSIGNED,
@@ -75,9 +64,64 @@ VALUES
 	(SYSDATE(), "Сауран", "71.51515" , "54.65567","delivering", 2),
 	(SYSDATE(), "Алматы", "80.535212" , "50.235235", "new", 2);
 
-INSERT INTO 
+INSERT INTO Positions
+	(`title`,`description`,`price`,`photo_url`,`partner_id`)
+VALUES
+	('Бургер', 'Бургер — это блюдо, обычно состоящее из котлеты из измельченного мяса, как правило, говядины, помещенной внутрь нарезанной булочки.', 890,'burger.png', (SELECT `id` from Partners WHERE `title`='McDonalds')),
+	('Цезарь ролл', '100% белое куриное мясо в хрустящей панировке, ломтик помидора, листья салата и ломтики твёрдого сыра, заправленные специальным соусом и завёрнутые в пшеничную лепешку.', 1250,'roll.png', (SELECT `id` from Partners WHERE `title`='McDonalds')),
+	('Пирожок чёрная смородина', 'Горячий пирожок из хрустящего теста с аппетитной начинкой из черной смородины. ', 500,'pirozhok.png', (SELECT `id` from Partners WHERE `title`='McDonalds')),
+	('Спагетти Болоньезе', 'Густой мясной соус с томатами,пармезаном, зеленью и маслом чили', 2199,'lapsha1.png', (SELECT `id` from Partners WHERE `title`='Del Papa')),
+	('Пенне Арабьята', 'Классическая острая паста с томатным соусом, чили и базиликом', 1899,'penne.png', (SELECT `id` from Partners WHERE `title`='Del Papa')),
+	('Ризотто с грибами', 'Традиционный рис карнароли с лесными грибами, шафраном и пармезаном', 1999,'Rizotto.png', (SELECT `id` from Partners WHERE `title`='Del Papa')),
+	('Капучино', 'Эспрессо, взбитое молоко (забота бариста о вас)', 690,'capuccino.png', (SELECT `id` from Partners WHERE `title`='COFFEEDAY')),
+	('Латте', 'Эспрессо, взбитое молоко (забота бариста о вас)', 690,'Rizotto.png', (SELECT `id` from Partners WHERE `title`='COFFEEDAY')),
+	('Американо', 'Двойной эспрессо, горячая вода (забота бариста о вас)', 590,'americano.png', (SELECT `id` from Partners WHERE `title`='COFFEEDAY'));
 
 INSERT INTO OrderPositions
-	(`order_id`,`position_id`)
+	(`order_id`,`position_id`) 
 VALUES
-	()
+	((SELECT `id` FROM Orders WHERE `id` = 1),(SELECT `id` FROM Positions WHERE `title` = 'Бургер')),
+	((SELECT `id` FROM Orders WHERE `id` = 1),(SELECT `id` FROM Positions WHERE `title` = 'Пенне Арабьята')),
+	((SELECT `id` FROM Orders WHERE `id` = 1),(SELECT `id` FROM Positions WHERE `title` = 'Капучино')),
+	((SELECT `id` FROM Orders WHERE `id` = 2),(SELECT `id` FROM Positions WHERE `title` = 'Спагетти Болоньезе')),
+	((SELECT `id` FROM Orders WHERE `id` = 2),(SELECT `id` FROM Positions WHERE `title` = 'Ризотто с грибами')),
+	((SELECT `id` FROM Orders WHERE `id` = 3),(SELECT `id` FROM Positions WHERE `title` = 'Латте')),
+	((SELECT `id` FROM Orders WHERE `id` = 3),(SELECT `id` FROM Positions WHERE `title` = 'Цезарь ролл')),
+	((SELECT `id` FROM Orders WHERE `id` = 4),(SELECT `id` FROM Positions WHERE `title` = 'Тирамису')),
+	((SELECT `id` FROM Orders WHERE `id` = 4),(SELECT `id` FROM Positions WHERE `title` = 'Матча чай')),
+	((SELECT `id` FROM Orders WHERE `id` = 4),(SELECT `id` FROM Positions WHERE `title` = 'Американо')),
+	((SELECT `id` FROM Orders WHERE `id` = 5),(SELECT `id` FROM Positions WHERE `title` = 'Американо')),
+	((SELECT `id` FROM Orders WHERE `id` = 6),(SELECT `id` FROM Positions WHERE `title` = 'Пирожок чёрная смородина')),
+	((SELECT `id` FROM Orders WHERE `id` = 6),(SELECT `id` FROM Positions WHERE `title` = 'Спагетти Болоньезе'));
+
+
+SELECT
+ 	Orders.`id` as 'Номер заказа',
+ 	Clients.`phone` as 'Телефон клиента',
+ 	Partners.`title` as 'Партнёр'
+FROM Orders
+	JOIN OrderPositions  
+		ON Orders.`id` = OrderPositions.`order_id`
+	JOIN Positions 
+		ON Positions.`id` = OrderPositions.`position_id`
+	JOIN Clients
+		ON Orders.`client_id` = Clients.`id`
+	JOIN Partners
+		ON Partners.`id` = Positions.`partner_id`;
+
+INSERT INTO `Partners` 
+    (`title`, `description`, `address`) 
+VALUES 
+    ('Burger King', 'Фаст-Фуд', 'Кабанбай батыра');
+
+INSERT INTO Positions 
+	(`title`, `description`,`price`,`partner_id`)
+VALUES
+ 	("ВОППЕР",'Фирменный, сытный бургер с овощами, со 100% говядиной, приготовленной на открытом огне',1500,(SELECT id FROM Partners WHERE title = "Burger King"));
+
+SELECT * FROM Partners
+	WHERE Partners.`id` NOT IN (
+		 (SELECT `partner_id` FROM Positions
+		 	JOIN OrderPositions
+				ON Positions.`id` = OrderPositions.`position_id` WHERE Positions.`id` = OrderPositions.`position_id`) 
+);
