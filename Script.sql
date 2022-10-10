@@ -32,7 +32,7 @@ CREATE TABLE Orders (
 	latitude float,
 	longitude float,
 	status enum('new', 'approved', 'delivering', 'delivered'),
-	client_id int UNSIGNED NOT NULL;
+	client_id int UNSIGNED NOT NULL,
 	foreign key (client_id) references Clients(id) on update cascade on delete restrict
 );
 
@@ -65,16 +65,16 @@ INSERT INTO Orders(created_at, address, latitude, longitude, status, client_id) 
 CREATE TABLE OrderAmount (
 	position_id int UNSIGNED NOT NULL,
 	order_id int UNSIGNED NOT NULL,
-	foreign key (position_id) references Positions(id) on update cascade on delete restrict
+	foreign key (position_id) references Positions(id) on update cascade on delete restrict,
 	foreign key (order_id) references Orders(id) on update cascade on delete restrict
 );
 
-INSERT INTO OrderAmount(position_id, order_is) VALUES (1, 1);
-INSERT INTO OrderAmount(position_id, order_is) VALUES (2, 2);
-INSERT INTO OrderAmount(position_id, order_is) VALUES (3, 3);
-INSERT INTO OrderAmount(position_id, order_is) VALUES (4, 4);
-INSERT INTO OrderAmount(position_id, order_is) VALUES (5, 5);
-INSERT INTO OrderAmount(position_id, order_is) VALUES (6, 6);
+INSERT INTO OrderAmount(position_id, order_id) VALUES (1, 1);
+INSERT INTO OrderAmount(position_id, order_id) VALUES (2, 2);
+INSERT INTO OrderAmount(position_id, order_id) VALUES (3, 3);
+INSERT INTO OrderAmount(position_id, order_id) VALUES (4, 4);
+INSERT INTO OrderAmount(position_id, order_id) VALUES (5, 5);
+INSERT INTO OrderAmount(position_id, order_id) VALUES (6, 6);
 
 # TASK 2
 SELECT Orders.id, Clients.phone, Partners.title from Orders
@@ -87,7 +87,7 @@ INNER JOIN Partners on Partners.id = Positions.partner_id
 INSERT INTO Partners(title, description, address) VALUES ('6inch', 'sandwiches', '55 6inch st.');
 INSERT INTO Positions(title, description, price, photo_url, partner_id) VALUES ('chicken grill', 'good sandwich', 1250, 'url', (SELECT id FROM Partners WHERE title='6inch'));
 
-SELECT Partners.title FROM Partners WHERE Partners.id NOT IN (SELECT partner_id FROM OrderAmount JOIN POSITIONS ON Positions.id = OrderAmount.position_id);
+SELECT Partners.title FROM Partners WHERE Partners.id NOT IN (SELECT partner_id FROM OrderAmount JOIN Positions ON Positions.id = OrderAmount.position_id);
 
 # TASK 4
 SELECT Positions.title FROM Orders, Positions, OrderAmount WHERE OrderAmount.order_id = Orders.id AND OrderAmount.position_id = Positions.id  AND Orders.id = 1 AND Orders.client_id = 1;
