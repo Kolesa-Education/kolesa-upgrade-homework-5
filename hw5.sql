@@ -12,6 +12,7 @@ CREATE TABLE Partners(
 
 CREATE TABLE Positions(
 	id int auto_increment NOT NULL,
+	title varchar(150),
 	description text,
 	price int NOT NULL default(0),
 	photo_url varchar(255),
@@ -71,7 +72,7 @@ INSERT INTO Positions(title, description,price,partner_id) VALUES
  ("Панини","Сэндвич с курицей","1500",(SELECT id FROM Partners WHERE title = "Donerka")),
  ("Картошка фри","200гр","1000",(SELECT id FROM Partners WHERE title = "Burger")),
  ("Кофе","порошковый кофе","100",(SELECT id FROM Partners WHERE title = "Burger")),
- ("БигМак","Итальянское пирожное","2000",(SELECT id FROM Partners WHERE title = "Burger"))
+ ("БигМак","Итальянское пирожное","2000",(SELECT id FROM Partners WHERE title = "Burger"));
  
  INSERT INTO Clients (phone,fullname) VALUES ("+87774543223","Atos");
  INSERT INTO Clients (phone,fullname) VALUES ("+87005330011","Partos");
@@ -84,7 +85,7 @@ INSERT INTO Positions(title, description,price,partner_id) VALUES
 	(SYSDATE(),"Аль-Фараби, 75","done",(SELECT id FROM Clients WHERE fullname = "Partos")),
 	(SYSDATE(),"Кошкарбаева, 21","done",(SELECT id FROM Clients WHERE fullname = "Partos")),
 	(SYSDATE(),"Назарбаева, 70","in progress",(SELECT id FROM Clients WHERE fullname = "Aramis")),
-	(SYSDATE(),"Толеби, 10","in progress",(SELECT id FROM Clients WHERE fullname = "Aramis"))
+	(SYSDATE(),"Толеби, 10","in progress",(SELECT id FROM Clients WHERE fullname = "Aramis"));
 	
 INSERT INTO OrderedPositions (order_id, position_id) SELECT Orders.id, Positions.id from Orders, Positions WHERE Orders.id = 1 AND Positions.id = 1;
 INSERT INTO OrderedPositions (order_id, position_id) SELECT Orders.id, Positions.id from Orders, Positions WHERE Orders.id = 2 AND Positions.id = 2;
@@ -99,6 +100,20 @@ SELECT Orders.id, Clients.phone, Partners.title FROM Orders
 	INNER JOIN Positions ON OrderedPositions.position_id = Positions.id
 	INNER JOIN Partners ON Positions.partner_id = Partners.id;
 
-	
-	
-	
+INSERT INTO Partners (title, description,address) values
+("Burger King","Better than McD","Abylai Khan,15");
+
+INSERT INTO Positions (title, descriptiON,price,partner_id) values
+ ("King Burger","bread, meat,salad, tomato,","1700",(SELECT id FROM Partners WHERE title = "Burger King"));
+ 
+ SELECT * FROM Partners WHERE Partners.id not in 
+ (SELECT partner_id FROM OrderedPositions, Positions WHERE Positions.id = OrderedPositions.position_id);
+ 
+
+ SELECT Positions.title FROM Orders, Positions, OrderedPositions
+ 	WHERE OrderedPositions.order_id = Orders.id
+ 	AND OrderedPositions.position_id = Positions.id 
+ 	AND Orders.id = 1 
+ 	AND Orders.client_id = 1 ;
+
+
