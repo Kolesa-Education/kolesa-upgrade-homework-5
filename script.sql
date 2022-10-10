@@ -34,7 +34,7 @@ CREATE TABLE orders (
     address varchar(255),
     latitude float,
     longitude float,
-    status enum('active', 'actived'),
+    status enum('active', 'archived'),
     client_id int UNSIGNED NOT NULL,
     FOREIGN KEY (client_id) REFERENCES clients(id)
     	ON UPDATE CASCADE
