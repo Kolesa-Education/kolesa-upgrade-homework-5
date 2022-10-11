@@ -42,7 +42,11 @@ FOREIGN KEY (client_id) REFERENCES Clients (id)
 
 CREATE TABLE PositionsToOrders (
 position_id int UNSIGNED NOT NULL,
-FOREIGN KEY (position_id) REFERENCES Positions (id),
+FOREIGN KEY (position_id) REFERENCES Positions (id)
+	ON UPDATE CASCADE
+    ON DELETE RESTRICT,
 order_id int UNSIGNED NOT NULL,
 FOREIGN KEY (order_id) REFERENCES Orders (id)
+	ON UPDATE CASCADE
+    ON DELETE RESTRICT
 );
