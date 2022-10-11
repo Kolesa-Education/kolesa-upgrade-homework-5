@@ -1,6 +1,8 @@
-CREATE DATABASE food_delivery;
+CREATE DATABASE food_delivery_service;
 
-USE food_delivery;
+USE food_delivery_service;
+
+drop database food_delivery_service;
 
 CREATE TABLE partners (
 	id int UNSIGNED primary key auto_increment,
@@ -47,8 +49,3 @@ CREATE TABLE positions_orders (
 	FOREIGN KEY (position_id) REFERENCES positions(id),
 	FOREIGN KEY (order_id) REFERENCES orders(id)
 );
-
-
-
-
-

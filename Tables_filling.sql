@@ -1,3 +1,5 @@
+USE food_delivery_service;
+
 INSERT INTO partners (title, description, address) VALUES
 	('Burger King', 'Home of the whopper', '050060 Almaty, Nazarbayev prospect 100/4'),
 	('Dodo', 'pizza chain No. 1 in Kazakhstan', 'Rozybakiev Street 247A, Almaty 050060'),
@@ -86,29 +88,24 @@ INSERT INTO orders (
 
 INSERT INTO positions_orders (order_id, position_id) VALUES
 	(1, 2),
-	(1, 4),
 	(1, 3),
-	(1, 5),
-	(2, 2),
-	(2, 8),
-	(2, 9),
-	(2, 6),
-	(3, 4),
+	(1, 1),
+	(2, 4),
+	(2, 5),
 	(3, 1),
-	(3, 5),
+	(3, 3),
 	(4, 5),
-	(4, 1),
-	(4, 9),
-	(5, 1),
-	(5, 2),
+	(4, 4),
 	(5, 9),
+	(5, 7),
 	(6, 9),
-	(6, 2),
-	(7, 7),
-	(7, 8),
-	(8, 3),
-	(8, 9);
+	(6, 8),
+	(7, 6),
+	(8, 1),
+	(8, 3);
 
-select * from positions_orders;
-	
+INSERT INTO partners (title, description, address) VALUES
+	('Test partner', 'Test desctiption', 'test address');
 
+INSERT INTO positions (title, description, price, photo_url, partner_id) VALUES 
+	('test position', 'Test desctiption', 0, 'test url', (SELECT id FROM partners WHERE title = 'Test partner'));
