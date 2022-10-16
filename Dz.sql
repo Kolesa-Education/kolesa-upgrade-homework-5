@@ -95,7 +95,7 @@ SELECT
  	Orders.id as "Номер заказа", 
  	Clients.phone as "Телефон клиента", 
  	Partners.title as "Партнёр"
-from Orders,Clients,position_orders,Positions,partners
+from Orders,Clients,position_orders,Positions,Partners
 where Orders.client_id = Clients.id
 and Orders.id = position_orders.order_id
 and Positions.id = position_orders.position_id
@@ -112,7 +112,7 @@ join Positions
 on Positions.id = position_orders.position_id
 join Clients
 on Orders.client_id = Clients.id
-join partners
+join Partners
 on Partners.id = Positions.partner_id;
 /*
  Задание 3
@@ -123,7 +123,7 @@ insert into Partners (title, description,address) values
 insert into Positions (title, description,price,partner_id) values
  ("Tasty Delicios Burger","suppose to be meat,salad, tomato,","2000",(select id from Partners where title = "Bahandi"));
  select * from Partners
- where partners.id not in 
+ where Partners.id not in 
  (select partner_id from position_orders, Positions where Positions.id = position_orders.position_id);
  /*
   Задание 4
