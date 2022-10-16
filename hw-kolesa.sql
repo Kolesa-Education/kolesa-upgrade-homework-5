@@ -45,12 +45,12 @@ insert into partners(title, description, address) values ("KFC", 'фаст-фу�
 
 select (partners.title), count(positions.partner_id)=0  from positions, partners  
 
-select (clients.id),(orders.id), (positions.description) from orders,clients, positions where orders.id =positions.id
+select (clients.id),(orders.id), (positions.description) from orders,clients, positions where orders.id = positions.id
 
 
 
 
-
+drop datebase hw
 
 
 
