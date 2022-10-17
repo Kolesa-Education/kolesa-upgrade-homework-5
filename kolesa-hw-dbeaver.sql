@@ -106,12 +106,14 @@ values ('BIBA', 'biba', 'biba 18 ');
 insert into positions(title, description, price, photo_url, partner_id)
 values ('biba', 'biba', 1950, 'url-biba', 4);
 
+
+
 -- 1
 SELECT Orders.id, Clients.phone, Partners.title
 FROM Orders
          JOIN Clients on Clients.id = Orders.client_id
-         JOIN positions on Positions.id=positions_id
-         JOIN  partners on Positions.partner_id = Partners.id;
+         JOIN positions on Positions.id = positions_id
+         JOIN partners on Positions.partner_id = Partners.id;
 
 -- 2
 select partners.title, count(positions.partner_id) = 0 as Without_Orders
@@ -119,7 +121,7 @@ from positions,
      partners;
 
 -- 3
-select Clients.id, Positions.title
+select Clients.id, orders.id as Order_ID, Positions.title
 from orders,
      clients,
      positions
