@@ -2,7 +2,8 @@ create database hw;
 
 use hw;
 
-create table Partners
+
+create table partners
 (
     id          int primary key auto_increment not null,
     title       varchar(150)                   not null,
@@ -10,7 +11,7 @@ create table Partners
     address     varchar(255)                   not null
 );
 
-create table Positions
+create table positions
 (
     id          int primary key auto_increment not null,
     title       varchar(255)                   not null,
@@ -18,18 +19,18 @@ create table Positions
     price       int                            not null default (0),
     photo_url   varchar(255),
     partner_id  int,
-    foreign key (partner_id) references Partners (id)
+    foreign key (partner_id) references partners (id)
 );
 
 
-create table Clients
+create table clients
 (
     id        int primary key not null auto_increment,
     phone     char(12),
     full_name varchar(255)
 );
 
-create table Orders
+create table orders
 (
     id           int primary key auto_increment not null,
     created_at   datetime,
@@ -40,7 +41,7 @@ create table Orders
     client_id    int,
     positions_id int,
     foreign key (positions_id) references positions (id),
-    foreign key (client_id) references Clients (id)
+    foreign key (client_id) references clients (id)
 );
 
 
@@ -109,11 +110,11 @@ values ('biba', 'biba', 1950, 'url-biba', 4);
 
 
 -- 1
-SELECT Orders.id, Clients.phone, Partners.title
-FROM Orders
-         JOIN Clients on Clients.id = Orders.client_id
-         JOIN positions on Positions.id = positions_id
-         JOIN partners on Positions.partner_id = Partners.id;
+SELECT orders.id, clients.phone, partners.title
+FROM orders
+         JOIN clients on clients.id = orders.client_id
+         JOIN positions on positions.id = positions_id
+         JOIN partners on positions.partner_id = partners.id;
 
 -- 2
 select partners.title, count(positions.partner_id) = 0 as Without_Orders
@@ -121,9 +122,9 @@ from positions,
      partners;
 
 -- 3
-select Clients.id, orders.id as Order_ID, Positions.title
+select clients.id, orders.id as order_ID, positions.title
 from orders,
      clients,
      positions
-where client_id = Clients.id
-  and positions_id = Positions.id
+where client_id = clients.id
+  and positions_id = positions.id
